@@ -1,0 +1,35 @@
+{
+  "profile": {
+    "nombre": "Irrael Cano Boteo",
+    "dpi": "1741 66923 2216",
+    "licencia": "1741 66923 2216",
+    "licencia_tipo": "Tipo B",
+    "nacimiento": "15 de abril de 1974 (52 años)",
+    "estado_civil": "Casado",
+    "profesion": "Bachiller en Ciencias y Letras por Madurez",
+    "nit": "16559495",
+    "direccion": "Aldea Llano Grande zona 0, Municipio de San José Acatempa, Departamento de Jutiapa",
+    "correo": "irraelcanoboteo2018@gmail.com",
+    "telefono": "5544-1699",
+    "entidad": "Dirección General de Protección y Seguridad Vial (PROVIAL)",
+    "renglon": "029",
+    "contrato_default": "No.1385-2026-029-PROVIAL",
+    "monto_fijo": "6500.00",
+    "monto_texto": "SEIS MIL QUINIENTOS QUETZALES EXACTOS"
+  },
+  "docs": [
+    { "id": "dpi", "titulo": "DPI / Documento Personal", "slug": "dpi", "file": "dpi.pdf", "desc": "CUI: 1741 66923 2216" },
+    { "id": "rtu", "titulo": "RTU Actualizado SAT", "slug": "rtu", "file": "rtu.pdf", "desc": "NIT: 16559495" },
+    { "id": "solvencia", "titulo": "Solvencia Fiscal SAT", "slug": "solvencia-fiscal", "file": "solvencia-fiscal.pdf", "desc": "Constancia SAT al día" },
+    { "id": "penales", "titulo": "Antecedentes Penales", "slug": "antecedentes-penales", "file": "antecedentes-penales.pdf", "desc": "Carencia confrontada" },
+    { "id": "policiales", "titulo": "Antecedentes Policiales", "slug": "antecedentes-policiales", "file": "antecedentes-policiales.pdf", "desc": "PNC confrontados" },
+    { "id": "cuenta", "titulo": "Cuenta Bancaria CHN", "slug": "cuenta-chn", "file": "cuenta-chn.pdf", "desc": "Constancia banco monetarios" },
+    { "id": "ornato", "titulo": "Boleto de Ornato 2026", "slug": "boleto-ornato", "file": "boleto-ornato.pdf", "desc": "Constancia municipal" },
+    { "id": "licencia", "titulo": "Licencia Tipo B", "slug": "licencia-tipo-b", "file": "licencia-tipo-b.pdf", "desc": "Vigente para conducción" },
+    { "id": "cv", "titulo": "Currículum Vitae Firmado", "slug": "cv", "file": "cv.pdf", "desc": "Hoja de vida laboral" },
+    { "id": "titulo", "titulo": "Título de Diversificado", "slug": "titulo-diversificado", "file": "titulo-diversificado.pdf", "desc": "Bachiller por Madurez" },
+    { "id": "diploma", "titulo": "Diploma Brigada PROVIAL", "slug": "diploma-brigada", "file": "diploma-brigada.pdf", "desc": "Acreditación institucional" },
+    { "id": "rgae", "titulo": "Constancia RGAE 2026", "slug": "rgae", "file": "rgae.pdf", "desc": "Registro General de Adquisiciones" },
+    { "id": "ficha", "titulo": "Ficha de Datos Personales", "slug": "ficha-datos", "file": "ficha-datos.pdf", "desc": "Ficha técnica institucional" }
+  ]
+}
