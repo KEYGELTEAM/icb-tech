@@ -576,3 +576,57 @@ textarea.form-control {
   align-items: center;
   gap: 4px;
 }
+
+/* Corrección de escala y aislamiento para pantalla de login */
+.auth-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--bg-primary);
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 360px;
+  background: var(--bg-card);
+  border: 2px solid var(--neon-cyan);
+  border-radius: 16px;
+  padding: 24px 20px;
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.2);
+  text-align: center;
+}
+
+.auth-lock-icon {
+  width: 48px !important;
+  height: 48px !important;
+  max-width: 48px;
+  max-height: 48px;
+  display: block;
+  margin: 0 auto 12px auto;
+  fill: var(--neon-cyan);
+}
+
+.auth-title {
+  color: #FFFFFF;
+  font-size: 20px;
+  font-weight: 900;
+  margin-bottom: 4px;
+}
+
+.auth-subtitle {
+  color: var(--text-muted);
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.auth-overlay.hidden {
+  display: none !important;
+}

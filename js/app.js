@@ -68,8 +68,11 @@ function initAuthentication() {
 
   if (isAuth) {
     DOM.authOverlay.classList.add('hidden');
+    document.body.style.overflow = '';
   } else {
     DOM.authOverlay.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
   }
 
   DOM.authForm.addEventListener('submit', (e) => {
@@ -80,6 +83,7 @@ function initAuthentication() {
     if (enteredUser === AUTH_CREDENTIALS.user && enteredPass === AUTH_CREDENTIALS.pass) {
       localStorage.setItem(AppState.storageKeyAuth, 'true');
       DOM.authOverlay.classList.add('hidden');
+      document.body.style.overflow = '';
       DOM.authForm.reset();
       hapticFeedback(50);
       showToast('Bienvenido a ICB Tech Tool');
@@ -94,6 +98,7 @@ function initAuthentication() {
   DOM.btnLogout.addEventListener('click', () => {
     localStorage.removeItem(AppState.storageKeyAuth);
     DOM.authOverlay.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
     hapticFeedback(50);
     showToast('Sesión finalizada');
   });
