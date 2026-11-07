@@ -1,4 +1,4 @@
-const CACHE_NAME = 'icb-tech-v1.0.4-login-fix';
+const CACHE_NAME = "icb-tech-v1.0.5-clean";
 const APP_SHELL = [
   './',
   './index.html',

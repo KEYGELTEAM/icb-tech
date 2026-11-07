@@ -1,59 +1,63 @@
 /**
  * ICB Tech Tool - Production Controller
  * Desarrollado por: Keyner Mayorga 'KNR'
- * Optimizado para Xiaomi Redmi 13C (Helio G85 / 4GB RAM)
+ * Optimizado para Xiaomi Redmi 13C
  */
 
 'use strict';
 
-const AUTH_CREDENTIALS = {
-  user: 'icbtech7',
-  pass: 'icbtech7'
-};
+const AUTH_USER = 'icbtech7';
+const AUTH_PASS = 'icbtech7';
+const STORAGE_KEY_AUTH = 'icb_auth_session_active';
+const STORAGE_KEY_CONTRACT = 'icb_contract_number';
 
 const AppState = {
   config: null,
   currentZoom: 1.0,
-  activeDoc: null,
-  storageKeyContract: 'icb_contract_number',
-  storageKeyAuth: 'icb_auth_session_active'
+  activeDoc: null
 };
 
-const DOM = {
-  authScreen: document.getElementById('authScreen'),
-  appWrapper: document.getElementById('appWrapper'),
-  authForm: document.getElementById('authForm'),
-  authUsername: document.getElementById('authUsername'),
-  authPassword: document.getElementById('authPassword'),
-  btnLogout: document.getElementById('btnLogout'),
-  assistBar: document.getElementById('assistBar'),
-  btnAssistBack: document.getElementById('btnAssistBack'),
-  docsContainer: document.getElementById('docsListContainer'),
-  masterDataContainer: document.getElementById('masterDataContainer'),
-  felMonth: document.getElementById('felMonth'),
-  felYear: document.getElementById('felYear'),
-  felContract: document.getElementById('felContract'),
-  felConceptOutput: document.getElementById('felConceptOutput'),
-  btnCopyConcept: document.getElementById('btnCopyConcept'),
-  btnCopyAmount: document.getElementById('btnCopyAmount'),
-  btnCopyNitProvial: document.getElementById('btnCopyNitProvial'),
-  btnOpenSat: document.getElementById('btnOpenSat'),
-  btnOpenVerificador: document.getElementById('btnOpenVerificador'),
-  btnOpenCgc: document.getElementById('btnOpenCgc'),
-  pdfModal: document.getElementById('pdfModal'),
-  pdfFrame: document.getElementById('pdfFrame'),
-  pdfViewport: document.getElementById('pdfViewport'),
-  modalDocTitle: document.getElementById('modalDocTitle'),
-  btnZoomIn: document.getElementById('btnZoomIn'),
-  btnZoomOut: document.getElementById('btnZoomOut'),
-  btnCloseModal: document.getElementById('btnCloseModal'),
-  toast: document.getElementById('toast'),
-  navTabs: document.querySelectorAll('.nav-tab'),
-  viewPanels: document.querySelectorAll('.view-panel')
-};
+// Referencias seguras al DOM obtenidas al inicializar
+let DOM = {};
 
-// Inicialización de la aplicación
+function getDOMElements() {
+  return {
+    authScreen: document.getElementById('authScreen'),
+    authForm: document.getElementById('authForm'),
+    authUsername: document.getElementById('authUsername'),
+    authPassword: document.getElementById('authPassword'),
+    appWrapper: document.getElementById('appWrapper'),
+    btnLogout: document.getElementById('btnLogout'),
+    assistBar: document.getElementById('assistBar'),
+    btnAssistBack: document.getElementById('btnAssistBack'),
+    docsContainer: document.getElementById('docsListContainer'),
+    masterDataContainer: document.getElementById('masterDataContainer'),
+    felMonth: document.getElementById('felMonth'),
+    felYear: document.getElementById('felYear'),
+    felContract: document.getElementById('felContract'),
+    felConceptOutput: document.getElementById('felConceptOutput'),
+    btnCopyConcept: document.getElementById('btnCopyConcept'),
+    btnCopyAmount: document.getElementById('btnCopyAmount'),
+    btnCopyNitProvial: document.getElementById('btnCopyNitProvial'),
+    btnOpenSat: document.getElementById('btnOpenSat'),
+    btnOpenVerificador: document.getElementById('btnOpenVerificador'),
+    btnOpenCgc: document.getElementById('btnOpenCgc'),
+    pdfModal: document.getElementById('pdfModal'),
+    pdfFrame: document.getElementById('pdfFrame'),
+    pdfViewport: document.getElementById('pdfViewport'),
+    modalDocTitle: document.getElementById('modalDocTitle'),
+    btnZoomIn: document.getElementById('btnZoomIn'),
+    btnZoomOut: document.getElementById('btnZoomOut'),
+    btnCloseModal: document.getElementById('btnCloseModal'),
+    toast: document.getElementById('toast'),
+    navTabs: document.querySelectorAll('.nav-tab'),
+    viewPanels: document.querySelectorAll('.view-panel')
+  };
+}
+
+// 1. Inicialización Principal
 document.addEventListener('DOMContentLoaded', async () => {
+  DOM = getDOMElements();
   initServiceWorker();
   initAuthentication();
   await loadConfiguration();
@@ -63,9 +67,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   initAssistBar();
 });
 
-// Control de Acceso y Sesión (Gatekeeper)
+// 2. Control de Acceso (Gatekeeper)
 function initAuthentication() {
-  const isAuth = localStorage.getItem(AppState.storageKeyAuth) === 'true';
+  const isAuth = localStorage.getItem(STORAGE_KEY_AUTH) === 'true';
 
   const setAuthUI = (authenticated) => {
     if (authenticated) {
@@ -80,14 +84,15 @@ function initAuthentication() {
   setAuthUI(isAuth);
 
   const processLogin = (e) => {
-    if (e) e.preventDefault();
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     const enteredUser = (DOM.authUsername.value || '').trim().toLowerCase();
     const enteredPass = (DOM.authPassword.value || '').trim().toLowerCase();
 
-    // Tolerancia a mayúsculas/minúsculas y espacios automáticos de teclado móvil
-    if (enteredUser === AUTH_CREDENTIALS.user.toLowerCase() && 
-        enteredPass === AUTH_CREDENTIALS.pass.toLowerCase()) {
-      localStorage.setItem(AppState.storageKeyAuth, 'true');
+    if (enteredUser === AUTH_USER && enteredPass === AUTH_PASS) {
+      localStorage.setItem(STORAGE_KEY_AUTH, 'true');
       setAuthUI(true);
       if (DOM.authForm) DOM.authForm.reset();
       hapticFeedback(50);
@@ -98,25 +103,21 @@ function initAuthentication() {
       DOM.authPassword.value = '';
       DOM.authPassword.focus();
     }
+    return false;
   };
 
   if (DOM.authForm) {
-    DOM.authForm.addEventListener('submit', processLogin);
+    DOM.authForm.onsubmit = processLogin;
   }
 
   const btnLoginSubmit = document.querySelector('#authForm button[type="submit"]');
   if (btnLoginSubmit) {
-    btnLoginSubmit.addEventListener('click', (e) => {
-      // Garantizar ejecución en móviles aunque no se dispare el evento submit nativo
-      if (DOM.authUsername.value && DOM.authPassword.value) {
-        processLogin(e);
-      }
-    });
+    btnLoginSubmit.onclick = processLogin;
   }
 
   if (DOM.btnLogout) {
     DOM.btnLogout.addEventListener('click', () => {
-      localStorage.removeItem(AppState.storageKeyAuth);
+      localStorage.removeItem(STORAGE_KEY_AUTH);
       setAuthUI(false);
       hapticFeedback(50);
       showToast('Sesión finalizada');
@@ -124,15 +125,18 @@ function initAuthentication() {
   }
 }
 
-// 1. function initServiceWorker() {
+// 3. Service Worker
+function initServiceWorker() {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js')
-      .then(reg => console.log('ICB SW Registrado:', reg.scope))
-      .catch(err => console.error('Error registrando ICB SW:', err));
+      .then(reg => {
+        reg.update();
+      })
+      .catch(err => console.error('SW Error:', err));
   }
 }
 
-// 2. Carga de Base de Datos Maestra
+// 4. Carga de Base de Datos
 async function loadConfiguration() {
   try {
     const response = await fetch('data/config.json');
@@ -140,16 +144,15 @@ async function loadConfiguration() {
     renderBoveda();
     renderMasterData();
   } catch (error) {
-    console.error('Error cargando config.json:', error);
-    showToast('Error cargando base de datos');
+    console.error('Error config.json:', error);
+    showToast('Error cargando expediente');
   }
 }
 
-// 3. Sistema SPA de Hash Routing
+// 5. Hash Routing SPA
 function initRouting() {
   const handleRoute = () => {
     const hash = window.location.hash.replace('#', '') || 'boveda';
-    
     DOM.viewPanels.forEach(panel => {
       panel.classList.remove('active');
       if (panel.id === `view-${hash}`) {
@@ -171,12 +174,11 @@ function initRouting() {
   handleRoute();
 }
 
-// 4. Renderizado de Bóveda y Manejadores Documentales
+// 6. Bóveda Digital
 function renderBoveda() {
-  if (!AppState.config || !AppState.config.docs) return;
-
+  if (!AppState.config || !AppState.config.docs || !DOM.docsContainer) return;
   DOM.docsContainer.innerHTML = '';
-  
+
   AppState.config.docs.forEach(doc => {
     const card = document.createElement('article');
     card.className = 'card doc-card';
@@ -196,13 +198,14 @@ function renderBoveda() {
 
     card.querySelector('.btn-preview').addEventListener('click', () => openPdfModal(doc));
     card.querySelector('.btn-share').addEventListener('click', () => shareDocViaWhatsApp(doc));
-
     DOM.docsContainer.appendChild(card);
   });
 }
 
-// 5. Visor Modal con Zoom Matricial CSS puro (Ultra Ahorro de RAM)
+// 7. Visor Modal
 function initModalVisor() {
+  if (!DOM.btnZoomIn) return;
+
   DOM.btnZoomIn.addEventListener('click', () => {
     if (AppState.currentZoom < 2.5) {
       AppState.currentZoom += 0.25;
@@ -224,7 +227,6 @@ function openPdfModal(doc) {
   AppState.activeDoc = doc;
   AppState.currentZoom = 1.0;
   applyZoom();
-
   DOM.modalDocTitle.textContent = doc.titulo;
   DOM.pdfFrame.src = `docs/${doc.file}`;
   DOM.pdfModal.classList.add('active');
@@ -242,7 +244,7 @@ function applyZoom() {
   hapticFeedback(20);
 }
 
-// 6. Integración Web Share API con Blob Renaming en Caliente
+// 8. Compartir WhatsApp con Blob Renaming
 async function shareDocViaWhatsApp(doc) {
   hapticFeedback(50);
   const normalizedFileName = `ICB_${doc.slug.toUpperCase().replace(/-/g, '_')}_IRRAEL_CANO.pdf`;
@@ -269,23 +271,25 @@ async function shareDocViaWhatsApp(doc) {
       tempLink.click();
       document.body.removeChild(tempLink);
       URL.revokeObjectURL(tempLink.href);
-      showToast('Descarga iniciada (Share no compatible)');
+      showToast('Descarga iniciada');
     }
   } catch (error) {
     if (error.name !== 'AbortError') {
-      console.error('Error al compartir:', error);
+      console.error(error);
       showToast('Error procesando archivo');
     }
   }
 }
 
-// 7. Módulo Mensual FEL & DTE
+// 9. Facturación FEL
 function initFelModule() {
+  if (!DOM.felMonth) return;
+
   const currentMonthIndex = new Date().getMonth();
   DOM.felMonth.selectedIndex = currentMonthIndex;
   DOM.felYear.value = new Date().getFullYear();
 
-  const savedContract = localStorage.getItem(AppState.storageKeyContract);
+  const savedContract = localStorage.getItem(STORAGE_KEY_CONTRACT);
   if (savedContract) {
     DOM.felContract.value = savedContract;
   } else if (AppState.config && AppState.config.profile) {
@@ -297,7 +301,7 @@ function initFelModule() {
     const year = DOM.felYear.value;
     const contract = DOM.felContract.value.trim();
 
-    localStorage.setItem(AppState.storageKeyContract, contract);
+    localStorage.setItem(STORAGE_KEY_CONTRACT, contract);
 
     const conceptText = `HONORARIOS PERCIBIDOS POR LA PRESTACIÓN DE SERVICIOS TÉCNICOS A LA DIRECCIÓN GENERAL DE PROTECCIÓN Y SEGURIDAD VIAL DEL MINISTERIO DE COMUNICACIONES, INFRAESTRUCTURA Y VIVIENDA, CORRESPONDIENTE AL MES DE ${month} DE ${year}, SEGÚN CONTRATO ADMINISTRATIVO ${contract}.`;
     DOM.felConceptOutput.value = conceptText;
@@ -322,9 +326,9 @@ function initFelModule() {
   setTimeout(updateConcept, 200);
 }
 
-// 8. Renderizado del Copiloto 029 (Datos Maestros)
+// 10. Copiloto 029
 function renderMasterData() {
-  if (!AppState.config || !AppState.config.profile) return;
+  if (!AppState.config || !AppState.config.profile || !DOM.masterDataContainer) return;
   const p = AppState.config.profile;
 
   const fields = [
@@ -361,8 +365,10 @@ function renderMasterData() {
   });
 }
 
-// 9. Barra de Asistencia Institucional para Portales
+// 11. Barra de Asistencia Institucional
 function initAssistBar() {
+  if (!DOM.btnOpenSat) return;
+
   const launchExternalPortal = (url) => {
     DOM.assistBar.classList.add('active');
     document.body.style.paddingTop = '60px';
@@ -389,7 +395,7 @@ function initAssistBar() {
   });
 }
 
-// 10. Utilitarios (Clipboard, Háptico, Toasts)
+// 12. Utilidades
 function copyToClipboard(text, successMessage) {
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(text)
@@ -430,6 +436,7 @@ function hapticFeedback(ms) {
 }
 
 function showToast(message) {
+  if (!DOM.toast) return;
   DOM.toast.textContent = message;
   DOM.toast.classList.add('show');
   setTimeout(() => {
