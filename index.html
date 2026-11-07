@@ -7,190 +7,227 @@
   <title>ICB Tech Tool - Simplificando el uso de la tecnología</title>
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* Candado blindado con dimensiones inline estrictas */
+    .auth-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #0A0F1D;
+      z-index: 999999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      box-sizing: border-box;
+    }
+    .auth-box {
+      width: 100%;
+      max-width: 360px;
+      background: #141B2D;
+      border: 2px solid #00E5FF;
+      border-radius: 16px;
+      padding: 24px 20px;
+      box-shadow: 0 0 25px rgba(0, 229, 255, 0.25);
+      text-align: center;
+      box-sizing: border-box;
+    }
+    .auth-lock-svg {
+      width: 48px !important;
+      height: 48px !important;
+      min-width: 48px;
+      min-height: 48px;
+      max-width: 48px;
+      max-height: 48px;
+      margin: 0 auto 12px auto;
+      display: block;
+      fill: #00E5FF;
+    }
+    /* El sistema principal no existe visualmente hasta loguear */
+    #appWrapper {
+      display: none;
+    }
+  </style>
 </head>
 <body>
 
-  <!-- Pantalla de Login / Gatekeeper Obligatorio -->
-  <section id="authOverlay" class="auth-overlay" aria-label="Acceso seguro al sistema">
-    <div class="auth-card">
-      <svg class="auth-lock-icon" viewBox="0 0 24 24">
+  <!-- PANTALLA EXCLUSIVA DE LOGIN (AISLADA) -->
+  <div id="authScreen" class="auth-screen">
+    <div class="auth-box">
+      <svg class="auth-lock-svg" viewBox="0 0 24 24">
         <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
       </svg>
-      <h2 class="auth-title">ICB Tech Tool</h2>
-      <p class="auth-subtitle">Acceso restringido para personal autorizado</p>
+      <h2 style="color: #FFFFFF; font-size: 20px; font-weight: 900; margin-bottom: 4px;">ICB TECH TOOL</h2>
+      <p style="color: #A0AEC0; font-size: 13px; margin-bottom: 20px;">Acceso restringido para personal autorizado</p>
       
-      <form id="authForm" class="auth-form" autocomplete="off">
-        <div class="form-group">
-          <label for="authUsername">Usuario:</label>
+      <form id="authForm" autocomplete="off">
+        <div class="form-group" style="text-align: left; margin-bottom: 14px;">
+          <label for="authUsername" style="display:block; color:#E2E8F0; font-size:13px; font-weight:700; margin-bottom:6px;">USUARIO:</label>
           <input type="text" id="authUsername" class="form-control" placeholder="Ingrese usuario" required autocorrect="off" autocapitalize="none">
         </div>
-        <div class="form-group">
-          <label for="authPassword">Contraseña:</label>
+        <div class="form-group" style="text-align: left; margin-bottom: 16px;">
+          <label for="authPassword" style="display:block; color:#E2E8F0; font-size:13px; font-weight:700; margin-bottom:6px;">CONTRASEÑA:</label>
           <input type="password" id="authPassword" class="form-control" placeholder="••••••••" required autocorrect="off" autocapitalize="none">
         </div>
-        <button type="submit" class="btn btn-cyan" style="margin-top: 10px;">
+        <button type="submit" class="btn btn-cyan">
           🔓 INGRESAR AL EXPEDIENTE
         </button>
       </form>
     </div>
-  </section>
+  </div>
 
-  <!-- Barra Asistida de Retorno -->
-  <aside id="assistBar" class="assist-bar" aria-label="Navegación institucional asistida">
-    <button id="btnAssistBack" class="btn-assist-back">⬅ VOLVER A ICB TECH TOOL</button>
-  </aside>
+  <!-- CONTENEDOR MAESTRO DE LA APP (BLOQUEADO HASTA AUTENTICAR) -->
+  <div id="appWrapper">
+    <!-- Barra Asistida de Retorno -->
+    <aside id="assistBar" class="assist-bar" aria-label="Navegación institucional asistida">
+      <button id="btnAssistBack" class="btn-assist-back">⬅ VOLVER A ICB TECH TOOL</button>
+    </aside>
 
-  <!-- Encabezado Institucional -->
-  <header class="app-header">
-    <div class="brand-badge">PROVIAL RENGLÓN 029</div>
-    <h1 class="app-title">ICB TECH TOOL</h1>
-    <p class="app-slogan">Simplificando el uso de la tecnología</p>
-    <p class="app-credits">DESARROLLADO POR: KEYNER MAYORGA 'KNR'</p>
-    <div>
-      <button id="btnLogout" class="btn-logout" title="Cerrar sesión segura">
-        🔒 CERRAR SESIÓN
-      </button>
-    </div>
-  </header>
-
-  <!-- Contenedor Principal SPA -->
-  <main class="main-content">
-
-    <!-- VISTA 1: BÓVEDA DIGITAL -->
-    <section id="view-boveda" class="view-panel active">
-      <h2 class="view-title">Bóveda Digital de Expediente</h2>
-      <div id="docsListContainer">
-        <!-- Renderizado dinámico vía JavaScript -->
-      </div>
-    </section>
-
-    <!-- VISTA 2: FACTURACIÓN MENSUAL FEL & DTE -->
-    <section id="view-fel" class="view-panel">
-      <h2 class="view-title">Generador FEL & DTE Mensual</h2>
-      
-      <div class="card">
-        <div class="grid-2">
-          <div class="form-group">
-            <label for="felMonth">Mes a Facturar:</label>
-            <select id="felMonth" class="form-control">
-              <option value="ENERO">Enero</option>
-              <option value="FEBRERO">Febrero</option>
-              <option value="MARZO">Marzo</option>
-              <option value="ABRIL">Abril</option>
-              <option value="MAYO">Mayo</option>
-              <option value="JUNIO">Junio</option>
-              <option value="JULIO">Julio</option>
-              <option value="AGOSTO">Agosto</option>
-              <option value="SEPTIEMBRE">Septiembre</option>
-              <option value="OCTUBRE">Octubre</option>
-              <option value="NOVIEMBRE">Noviembre</option>
-              <option value="DICIEMBRE">Diciembre</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="felYear">Año:</label>
-            <input type="number" id="felYear" class="form-control" value="2026">
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="felContract">No. de Contrato Administrativo:</label>
-          <input type="text" id="felContract" class="form-control">
-        </div>
-
-        <div class="form-group">
-          <label for="felConceptOutput">Concepto de Factura Oficial:</label>
-          <textarea id="felConceptOutput" class="form-control" readonly></textarea>
-        </div>
-
-        <button id="btnCopyConcept" class="btn btn-orange" style="margin-bottom: 12px;">
-          📋 COPIAR CONCEPTO COMPLETO
+    <!-- Encabezado Institucional -->
+    <header class="app-header">
+      <div class="brand-badge">PROVIAL RENGLÓN 029</div>
+      <h1 class="app-title">ICB TECH TOOL</h1>
+      <p class="app-slogan">Simplificando el uso de la tecnología</p>
+      <p class="app-credits">DESARROLLADO POR: KEYNER MAYORGA 'KNR'</p>
+      <div>
+        <button id="btnLogout" class="btn-logout" title="Cerrar sesión segura">
+          🔒 CERRAR SESIÓN
         </button>
-
-        <div class="data-row">
-          <div>
-            <div class="data-label">Monto Bruto Fijo</div>
-            <div class="data-value">Q 6,500.00</div>
-          </div>
-          <button id="btnCopyAmount" class="btn-copy-small">COPIAR Q</button>
-        </div>
-
-        <div class="data-row">
-          <div>
-            <div class="data-label">NIT PROVIAL (Receptor)</div>
-            <div class="data-value">6374921-8</div>
-          </div>
-          <button id="btnCopyNitProvial" class="btn-copy-small">COPIAR</button>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3 style="color: var(--neon-cyan); margin-bottom: 12px; font-size: 16px;">PORTALES EXTERNOS DIRECTOS</h3>
-        <button id="btnOpenSat" class="btn btn-outline" style="margin-bottom: 10px;">
-          🌐 ABRIR AGENCIA VIRTUAL SAT
-        </button>
-        <button id="btnOpenVerificador" class="btn btn-outline">
-          🔍 ABRIR VERIFICADOR DTE
-        </button>
-      </div>
-    </section>
-
-    <!-- VISTA 3: ASISTENTE RECONTRATACIÓN Y COPILOTO 029 -->
-    <section id="view-recontratacion" class="view-panel">
-      <h2 class="view-title">Copiloto 029 / Datos Maestros</h2>
-
-      <div class="card">
-        <div id="masterDataContainer">
-          <!-- Renderizado dinámico de datos de config.json -->
-        </div>
-      </div>
-
-      <div class="ext-portal-card">
-        <h3>Contraloría General de Cuentas (CGC)</h3>
-        <p>Emisión y verificación de Finiquito Digital 2026.</p>
-        <button id="btnOpenCgc" class="btn btn-outline">
-          🏛️ ABRIR PORTAL CIUDADANO CGC
-        </button>
-      </div>
-    </section>
-
-  </main>
-
-  <!-- Modal Visor PDF Ultraligero -->
-  <div id="pdfModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modalDocTitle">
-    <header class="modal-header">
-      <div id="modalDocTitle" class="modal-title">Documento</div>
-      <div class="modal-controls">
-        <button id="btnZoomOut" class="btn-modal-action" title="Reducir zoom">－</button>
-        <button id="btnZoomIn" class="btn-modal-action" title="Aumentar zoom">＋</button>
-        <button id="btnCloseModal" class="btn-modal-action btn-modal-close" title="Cerrar visor">✕</button>
       </div>
     </header>
-    <div class="modal-body">
-      <div id="pdfViewport" class="pdf-viewport">
-        <iframe id="pdfFrame" src="" title="Visor de Expediente"></iframe>
+
+    <!-- Contenedor Principal SPA -->
+    <main class="main-content">
+      <!-- VISTA 1: BÓVEDA DIGITAL -->
+      <section id="view-boveda" class="view-panel active">
+        <h2 class="view-title">Bóveda Digital de Expediente</h2>
+        <div id="docsListContainer"></div>
+      </section>
+
+      <!-- VISTA 2: FACTURACIÓN MENSUAL FEL & DTE -->
+      <section id="view-fel" class="view-panel">
+        <h2 class="view-title">Generador FEL & DTE Mensual</h2>
+        <div class="card">
+          <div class="grid-2">
+            <div class="form-group">
+              <label for="felMonth">Mes a Facturar:</label>
+              <select id="felMonth" class="form-control">
+                <option value="ENERO">Enero</option>
+                <option value="FEBRERO">Febrero</option>
+                <option value="MARZO">Marzo</option>
+                <option value="ABRIL">Abril</option>
+                <option value="MAYO">Mayo</option>
+                <option value="JUNIO">Junio</option>
+                <option value="JULIO">Julio</option>
+                <option value="AGOSTO">Agosto</option>
+                <option value="SEPTIEMBRE">Septiembre</option>
+                <option value="OCTUBRE">Octubre</option>
+                <option value="NOVIEMBRE">Noviembre</option>
+                <option value="DICIEMBRE">Diciembre</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="felYear">Año:</label>
+              <input type="number" id="felYear" class="form-control" value="2026">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="felContract">No. de Contrato Administrativo:</label>
+            <input type="text" id="felContract" class="form-control">
+          </div>
+
+          <div class="form-group">
+            <label for="felConceptOutput">Concepto de Factura Oficial:</label>
+            <textarea id="felConceptOutput" class="form-control" readonly></textarea>
+          </div>
+
+          <button id="btnCopyConcept" class="btn btn-orange" style="margin-bottom: 12px;">
+            📋 COPIAR CONCEPTO COMPLETO
+          </button>
+
+          <div class="data-row">
+            <div>
+              <div class="data-label">Monto Bruto Fijo</div>
+              <div class="data-value">Q 6,500.00</div>
+            </div>
+            <button id="btnCopyAmount" class="btn-copy-small">COPIAR Q</button>
+          </div>
+
+          <div class="data-row">
+            <div>
+              <div class="data-label">NIT PROVIAL (Receptor)</div>
+              <div class="data-value">6374921-8</div>
+            </div>
+            <button id="btnCopyNitProvial" class="btn-copy-small">COPIAR</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 style="color: var(--neon-cyan); margin-bottom: 12px; font-size: 16px;">PORTALES EXTERNOS DIRECTOS</h3>
+          <button id="btnOpenSat" class="btn btn-outline" style="margin-bottom: 10px;">
+            🌐 ABRIR AGENCIA VIRTUAL SAT
+          </button>
+          <button id="btnOpenVerificador" class="btn btn-outline">
+            🔍 ABRIR VERIFICADOR DTE
+          </button>
+        </div>
+      </section>
+
+      <!-- VISTA 3: ASISTENTE RECONTRATACIÓN Y COPILOTO 029 -->
+      <section id="view-recontratacion" class="view-panel">
+        <h2 class="view-title">Copiloto 029 / Datos Maestros</h2>
+        <div class="card">
+          <div id="masterDataContainer"></div>
+        </div>
+        <div class="ext-portal-card">
+          <h3>Contraloría General de Cuentas (CGC)</h3>
+          <p>Emisión y verificación de Finiquito Digital 2026.</p>
+          <button id="btnOpenCgc" class="btn btn-outline">
+            🏛️ ABRIR PORTAL CIUDADANO CGC
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <!-- Modal Visor PDF Ultraligero -->
+    <div id="pdfModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modalDocTitle">
+      <header class="modal-header">
+        <div id="modalDocTitle" class="modal-title">Documento</div>
+        <div class="modal-controls">
+          <button id="btnZoomOut" class="btn-modal-action" title="Reducir zoom">－</button>
+          <button id="btnZoomIn" class="btn-modal-action" title="Aumentar zoom">＋</button>
+          <button id="btnCloseModal" class="btn-modal-action btn-modal-close" title="Cerrar visor">✕</button>
+        </div>
+      </header>
+      <div class="modal-body">
+        <div id="pdfViewport" class="pdf-viewport">
+          <iframe id="pdfFrame" src="" title="Visor de Expediente"></iframe>
+        </div>
       </div>
     </div>
+
+    <!-- Navegación Inferior Móvil -->
+    <nav class="bottom-nav" aria-label="Navegación principal">
+      <a href="#boveda" class="nav-tab active" data-view="boveda">
+        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+        Bóveda
+      </a>
+      <a href="#fel" class="nav-tab" data-view="fel">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+        Factura FEL
+      </a>
+      <a href="#recontratacion" class="nav-tab" data-view="recontratacion">
+        <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+        Copiloto 029
+      </a>
+    </nav>
   </div>
 
   <!-- Toast Feedbacks -->
   <div id="toast" class="toast">Texto copiado al portapapeles</div>
-
-  <!-- Navegación Inferior Móvil -->
-  <nav class="bottom-nav" aria-label="Navegación principal">
-    <a href="#boveda" class="nav-tab active" data-view="boveda">
-      <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
-      Bóveda
-    </a>
-    <a href="#fel" class="nav-tab" data-view="fel">
-      <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
-      Factura FEL
-    </a>
-    <a href="#recontratacion" class="nav-tab" data-view="recontratacion">
-      <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-      Copiloto 029
-    </a>
-  </nav>
 
   <script src="js/app.js"></script>
 </body>

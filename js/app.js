@@ -20,7 +20,8 @@ const AppState = {
 };
 
 const DOM = {
-  authOverlay: document.getElementById('authOverlay'),
+  authScreen: document.getElementById('authScreen'),
+  appWrapper: document.getElementById('appWrapper'),
   authForm: document.getElementById('authForm'),
   authUsername: document.getElementById('authUsername'),
   authPassword: document.getElementById('authPassword'),

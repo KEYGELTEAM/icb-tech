@@ -1,4 +1,4 @@
-const CACHE_NAME = 'icb-tech-v1.0.2-ui-fix';
+const CACHE_NAME = 'icb-tech-v1.0.3-zero-render';
 const APP_SHELL = [
   './',
   './index.html',
