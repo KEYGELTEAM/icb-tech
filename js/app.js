@@ -67,46 +67,64 @@ document.addEventListener('DOMContentLoaded', async () => {
 function initAuthentication() {
   const isAuth = localStorage.getItem(AppState.storageKeyAuth) === 'true';
 
-  if (isAuth) {
-    DOM.authOverlay.classList.add('hidden');
-    document.body.style.overflow = '';
-  } else {
-    DOM.authOverlay.classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
-    document.body.style.overflow = 'hidden';
-  }
+  const setAuthUI = (authenticated) => {
+    if (authenticated) {
+      if (DOM.authScreen) DOM.authScreen.style.setProperty('display', 'none', 'important');
+      if (DOM.appWrapper) DOM.appWrapper.style.setProperty('display', 'block', 'important');
+    } else {
+      if (DOM.authScreen) DOM.authScreen.style.setProperty('display', 'flex', 'important');
+      if (DOM.appWrapper) DOM.appWrapper.style.setProperty('display', 'none', 'important');
+    }
+  };
 
-  DOM.authForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const enteredUser = DOM.authUsername.value.trim();
-    const enteredPass = DOM.authPassword.value.trim();
+  setAuthUI(isAuth);
 
-    if (enteredUser === AUTH_CREDENTIALS.user && enteredPass === AUTH_CREDENTIALS.pass) {
+  const processLogin = (e) => {
+    if (e) e.preventDefault();
+    const enteredUser = (DOM.authUsername.value || '').trim().toLowerCase();
+    const enteredPass = (DOM.authPassword.value || '').trim().toLowerCase();
+
+    // Tolerancia a mayúsculas/minúsculas y espacios automáticos de teclado móvil
+    if (enteredUser === AUTH_CREDENTIALS.user.toLowerCase() && 
+        enteredPass === AUTH_CREDENTIALS.pass.toLowerCase()) {
       localStorage.setItem(AppState.storageKeyAuth, 'true');
-      DOM.authOverlay.classList.add('hidden');
-      document.body.style.overflow = '';
-      DOM.authForm.reset();
+      setAuthUI(true);
+      if (DOM.authForm) DOM.authForm.reset();
       hapticFeedback(50);
-      showToast('Bienvenido a ICB Tech Tool');
+      showToast('Acceso autorizado');
     } else {
       hapticFeedback(100);
       showToast('Usuario o clave incorrecta');
       DOM.authPassword.value = '';
       DOM.authPassword.focus();
     }
-  });
+  };
 
-  DOM.btnLogout.addEventListener('click', () => {
-    localStorage.removeItem(AppState.storageKeyAuth);
-    DOM.authOverlay.classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
-    hapticFeedback(50);
-    showToast('Sesión finalizada');
-  });
+  if (DOM.authForm) {
+    DOM.authForm.addEventListener('submit', processLogin);
+  }
+
+  const btnLoginSubmit = document.querySelector('#authForm button[type="submit"]');
+  if (btnLoginSubmit) {
+    btnLoginSubmit.addEventListener('click', (e) => {
+      // Garantizar ejecución en móviles aunque no se dispare el evento submit nativo
+      if (DOM.authUsername.value && DOM.authPassword.value) {
+        processLogin(e);
+      }
+    });
+  }
+
+  if (DOM.btnLogout) {
+    DOM.btnLogout.addEventListener('click', () => {
+      localStorage.removeItem(AppState.storageKeyAuth);
+      setAuthUI(false);
+      hapticFeedback(50);
+      showToast('Sesión finalizada');
+    });
+  }
 }
 
-// 1. Registro de Service Worker PWA Offline-First
-function initServiceWorker() {
+// 1. function initServiceWorker() {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js')
       .then(reg => console.log('ICB SW Registrado:', reg.scope))
