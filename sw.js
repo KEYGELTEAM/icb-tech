@@ -1,4 +1,4 @@
-const CACHE_NAME = 'icb-tech-v1.0.0-build20261107';
+const CACHE_NAME = 'icb-tech-v1.0.1-authgate';
 const APP_SHELL = [
   './',
   './index.html',

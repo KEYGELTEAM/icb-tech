@@ -10,6 +10,31 @@
 </head>
 <body>
 
+  <!-- Pantalla de Login / Gatekeeper Obligatorio -->
+  <section id="authOverlay" class="auth-overlay" aria-label="Acceso seguro al sistema">
+    <div class="auth-card">
+      <svg class="auth-lock-icon" viewBox="0 0 24 24">
+        <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+      </svg>
+      <h2 class="auth-title">ICB Tech Tool</h2>
+      <p class="auth-subtitle">Acceso restringido para personal autorizado</p>
+      
+      <form id="authForm" class="auth-form" autocomplete="off">
+        <div class="form-group">
+          <label for="authUsername">Usuario:</label>
+          <input type="text" id="authUsername" class="form-control" placeholder="Ingrese usuario" required autocorrect="off" autocapitalize="none">
+        </div>
+        <div class="form-group">
+          <label for="authPassword">Contraseña:</label>
+          <input type="password" id="authPassword" class="form-control" placeholder="••••••••" required autocorrect="off" autocapitalize="none">
+        </div>
+        <button type="submit" class="btn btn-cyan" style="margin-top: 10px;">
+          🔓 INGRESAR AL EXPEDIENTE
+        </button>
+      </form>
+    </div>
+  </section>
+
   <!-- Barra Asistida de Retorno -->
   <aside id="assistBar" class="assist-bar" aria-label="Navegación institucional asistida">
     <button id="btnAssistBack" class="btn-assist-back">⬅ VOLVER A ICB TECH TOOL</button>
@@ -21,6 +46,11 @@
     <h1 class="app-title">ICB TECH TOOL</h1>
     <p class="app-slogan">Simplificando el uso de la tecnología</p>
     <p class="app-credits">DESARROLLADO POR: KEYNER MAYORGA 'KNR'</p>
+    <div>
+      <button id="btnLogout" class="btn-logout" title="Cerrar sesión segura">
+        🔒 CERRAR SESIÓN
+      </button>
+    </div>
   </header>
 
   <!-- Contenedor Principal SPA -->

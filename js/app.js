@@ -6,16 +6,25 @@
 
 'use strict';
 
-// Estado global de la aplicación
+const AUTH_CREDENTIALS = {
+  user: 'icbtech7',
+  pass: 'icbtech7'
+};
+
 const AppState = {
   config: null,
   currentZoom: 1.0,
   activeDoc: null,
-  storageKeyContract: 'icb_contract_number'
+  storageKeyContract: 'icb_contract_number',
+  storageKeyAuth: 'icb_auth_session_active'
 };
 
-// Elementos del DOM
 const DOM = {
+  authOverlay: document.getElementById('authOverlay'),
+  authForm: document.getElementById('authForm'),
+  authUsername: document.getElementById('authUsername'),
+  authPassword: document.getElementById('authPassword'),
+  btnLogout: document.getElementById('btnLogout'),
   assistBar: document.getElementById('assistBar'),
   btnAssistBack: document.getElementById('btnAssistBack'),
   docsContainer: document.getElementById('docsListContainer'),
@@ -42,15 +51,53 @@ const DOM = {
   viewPanels: document.querySelectorAll('.view-panel')
 };
 
-// Inicialización del sistema
+// Inicialización de la aplicación
 document.addEventListener('DOMContentLoaded', async () => {
   initServiceWorker();
+  initAuthentication();
   await loadConfiguration();
   initRouting();
   initFelModule();
   initModalVisor();
   initAssistBar();
 });
+
+// Control de Acceso y Sesión (Gatekeeper)
+function initAuthentication() {
+  const isAuth = localStorage.getItem(AppState.storageKeyAuth) === 'true';
+
+  if (isAuth) {
+    DOM.authOverlay.classList.add('hidden');
+  } else {
+    DOM.authOverlay.classList.remove('hidden');
+  }
+
+  DOM.authForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const enteredUser = DOM.authUsername.value.trim();
+    const enteredPass = DOM.authPassword.value.trim();
+
+    if (enteredUser === AUTH_CREDENTIALS.user && enteredPass === AUTH_CREDENTIALS.pass) {
+      localStorage.setItem(AppState.storageKeyAuth, 'true');
+      DOM.authOverlay.classList.add('hidden');
+      DOM.authForm.reset();
+      hapticFeedback(50);
+      showToast('Bienvenido a ICB Tech Tool');
+    } else {
+      hapticFeedback(100);
+      showToast('Usuario o clave incorrecta');
+      DOM.authPassword.value = '';
+      DOM.authPassword.focus();
+    }
+  });
+
+  DOM.btnLogout.addEventListener('click', () => {
+    localStorage.removeItem(AppState.storageKeyAuth);
+    DOM.authOverlay.classList.remove('hidden');
+    hapticFeedback(50);
+    showToast('Sesión finalizada');
+  });
+}
 
 // 1. Registro de Service Worker PWA Offline-First
 function initServiceWorker() {
@@ -123,7 +170,6 @@ function renderBoveda() {
       </div>
     `;
 
-    // Eventos independientes
     card.querySelector('.btn-preview').addEventListener('click', () => openPdfModal(doc));
     card.querySelector('.btn-share').addEventListener('click', () => shareDocViaWhatsApp(doc));
 
@@ -192,7 +238,6 @@ async function shareDocViaWhatsApp(doc) {
       });
       showToast('Compartido con éxito');
     } else {
-      // Fallback a descarga automática si el navegador no permite compartir archivos
       const tempLink = document.createElement('a');
       tempLink.href = URL.createObjectURL(blob);
       tempLink.download = normalizedFileName;
@@ -212,12 +257,10 @@ async function shareDocViaWhatsApp(doc) {
 
 // 7. Módulo Mensual FEL & DTE
 function initFelModule() {
-  // Configurar mes actual automáticamente
   const currentMonthIndex = new Date().getMonth();
   DOM.felMonth.selectedIndex = currentMonthIndex;
   DOM.felYear.value = new Date().getFullYear();
 
-  // Carga o persistencia de contrato
   const savedContract = localStorage.getItem(AppState.storageKeyContract);
   if (savedContract) {
     DOM.felContract.value = savedContract;
@@ -240,22 +283,18 @@ function initFelModule() {
   DOM.felYear.addEventListener('input', updateConcept);
   DOM.felContract.addEventListener('input', updateConcept);
 
-  // Copiado de Concepto
   DOM.btnCopyConcept.addEventListener('click', () => {
     copyToClipboard(DOM.felConceptOutput.value, '¡Concepto copiado con éxito!');
   });
 
-  // Copiado de Monto
   DOM.btnCopyAmount.addEventListener('click', () => {
     copyToClipboard('6500.00', 'Monto Q 6,500.00 copiado');
   });
 
-  // Copiado de NIT Provial
   DOM.btnCopyNitProvial.addEventListener('click', () => {
     copyToClipboard('6374921-8', 'NIT PROVIAL copiado');
   });
 
-  // Primera ejecución diferida a la carga del config
   setTimeout(updateConcept, 200);
 }
 
